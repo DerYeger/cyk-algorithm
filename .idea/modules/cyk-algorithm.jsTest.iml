@@ -5,16 +5,18 @@
       <configuration version="3" platform="JavaScript " allPlatforms="JS []" useProjectSettings="false" isTestModule="true" externalProjectId="cyk-algorithm">
         <dependsOnModuleNames>cyk-algorithm:commonTest</dependsOnModuleNames>
         <sourceSets>
-          <sourceSet>cyk-algorithm.commonTest</sourceSet>
           <sourceSet>cyk-algorithm.jsMain</sourceSet>
           <sourceSet>cyk-algorithm.commonMain</sourceSet>
+          <sourceSet>cyk-algorithm.commonTest</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <externalSystemTestTasks>
           <externalSystemTestTask>jsBrowserTest|cyk-algorithm:jsTest|js</externalSystemTestTask>
         </externalSystemTestTasks>
         <testOutputPath>$MODULE_DIR$/../../build/js/packages/cyk-algorithm-test/kotlin/cyk-algorithm-test.js</testOutputPath>
-        <compilerSettings />
+        <compilerSettings>
+          <option name="additionalArguments" value="-XXLanguage:+InlineClasses" />
+        </compilerSettings>
         <compilerArguments>
           <option name="outputFile" value="$MODULE_DIR$/../../build/js/packages/cyk-algorithm-test/kotlin/cyk-algorithm-test.js" />
           <option name="noStdlib" value="true" />

@@ -9,7 +9,9 @@
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <productionOutputPath>$MODULE_DIR$/../../build/js/packages/cyk-algorithm/kotlin/cyk-algorithm.js</productionOutputPath>
-        <compilerSettings />
+        <compilerSettings>
+          <option name="additionalArguments" value="-XXLanguage:+InlineClasses" />
+        </compilerSettings>
         <compilerArguments>
           <option name="outputFile" value="$MODULE_DIR$/../../build/js/packages/cyk-algorithm/kotlin/cyk-algorithm.js" />
           <option name="noStdlib" value="true" />

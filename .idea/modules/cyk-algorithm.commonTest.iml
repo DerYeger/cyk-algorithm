@@ -9,7 +9,9 @@
           <externalSystemTestTask>jvmTest|cyk-algorithm:jvmTest|jvm</externalSystemTestTask>
           <externalSystemTestTask>nativeTest|cyk-algorithm:nativeTest|native</externalSystemTestTask>
         </externalSystemTestTasks>
-        <compilerSettings />
+        <compilerSettings>
+          <option name="additionalArguments" value="-XXLanguage:+InlineClasses" />
+        </compilerSettings>
         <compilerArguments>
           <option name="languageVersion" value="1.4" />
           <option name="apiVersion" value="1.4" />
