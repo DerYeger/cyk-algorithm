@@ -1,43 +1,40 @@
 package eu.yeger.cyk
 
-data class CYKModel(val array: Array<Array<MutableSet<NonTerminalSymbol>>>) {
+class CYKModel
+private constructor(val grid: List<List<Set<NonTerminalSymbol>>>) {
 
-    constructor(wordLength: Int) : this(Array(wordLength) { rowIndex ->
-        Array(wordLength - rowIndex) {
-            mutableSetOf<NonTerminalSymbol>()
+    constructor(wordLength: Int) : this(List(wordLength) { rowIndex ->
+        List(wordLength - rowIndex) {
+            setOf<NonTerminalSymbol>()
         }
     })
 
     operator fun get(rowIndex: Int, columnIndex: Int): Set<NonTerminalSymbol> {
-        return array[rowIndex][columnIndex]
+        return grid[rowIndex][columnIndex]
     }
 
-    fun add(rowIndex: Int, columnIndex: Int, nonTerminalSymbol: NonTerminalSymbol) {
-        array[rowIndex][columnIndex].add(nonTerminalSymbol)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as CYKModel
-
-        if (!array.contentDeepEquals(other.array)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return array.contentDeepHashCode()
+    fun add(rowIndex: Int, columnIndex: Int, nonTerminalSymbol: NonTerminalSymbol): CYKModel {
+        val newGrid = grid.mapIndexed { gridRowIndex, row ->
+            when (gridRowIndex) {
+                rowIndex -> row.mapIndexed { gridColumnIndex, set ->
+                    when (gridColumnIndex) {
+                        columnIndex -> set + nonTerminalSymbol
+                        else -> set
+                    }
+                }
+                else -> row
+            }
+        }
+        return CYKModel(newGrid)
     }
 }
 
 fun CYKModel.isTrue(): Boolean {
-    return array.last().first().any { it is StartSymbol}
+    return grid.last().first().any { it is StartSymbol }
 }
 
 fun CYKModel.toFormattedString(): String {
-    return with(array) {
+    return with(grid) {
         val maxLength = maxOf { row ->
             row.maxOf { set ->
                 set.joinToString(", ") { it.toString() }.length

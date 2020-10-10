@@ -2,12 +2,12 @@ package eu.yeger.cyk
 
 fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
     val n = inputString.count()
-    val model = CYKModel(inputString.count())
+    var model = CYKModel(inputString.count())
 
     inputString.forEachIndexed { terminalSymbolIndex, terminalSymbol ->
         grammar.productionsRules.terminatingRules.forEach { productionRule ->
             if (productionRule produces terminalSymbol) {
-                model.add(0, terminalSymbolIndex, productionRule.input)
+                model = model.add(0, terminalSymbolIndex, productionRule.input)
             }
         }
     }
@@ -20,7 +20,7 @@ fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
                         model[p-1, s-1].contains(productionRule.firstNonTerminatingSymbol)
                         && model[l - p - 1, s + p - 1].contains(productionRule.secondNonTerminatingSymbol)
                     ) {
-                        model.add(l-1, s-1, productionRule.input)
+                        model = model.add(l-1, s-1, productionRule.input)
                     }
                 }
             }
