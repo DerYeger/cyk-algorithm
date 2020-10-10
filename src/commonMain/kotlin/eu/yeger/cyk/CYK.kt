@@ -4,17 +4,16 @@ fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
     if (grammar.validatedOrNull() == null) return false
 
     val n = inputString.count()
-    val map = MutableTripleMap<Int, Int, NonTerminalSymbol, Boolean>()
+    val array = Array(n) {
+        Array(n) {
+            mutableSetOf<NonTerminalSymbol>()
+        }
+    }
 
     inputString.forEachIndexed { terminalSymbolIndex, terminalSymbol ->
         grammar.productionsRules.forEach { productionRule ->
-            map[0, terminalSymbolIndex, productionRule.input] = productionRule is TerminatingRule && productionRule produces terminalSymbol
-            if (terminalSymbol == CustomTerminalSymbol("a") && productionRule is TerminatingRule && productionRule produces terminalSymbol) {
-                println("Rule: $productionRule")
-                println("Produces: ${productionRule is TerminatingRule && productionRule produces terminalSymbol}")
-                println(terminalSymbolIndex)
-                println(map[0, terminalSymbolIndex, productionRule.input])
-                println()
+            if (productionRule is TerminatingRule && productionRule produces terminalSymbol) {
+                array[0][terminalSymbolIndex].add(productionRule.input)
             }
         }
     }
@@ -25,41 +24,28 @@ fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
         for (s in 1..(n-l+1)) {
             for (p in 1 until l) {
                 nonTerminatingRules.forEach { productionRule ->
-                    if (map.has(p-1, s-1, productionRule.firstNonTerminatingSymbol) && map.has(l-p-1, s+p-1, productionRule.secondNonTerminatingSymbol)) {
-                        map[l-1, s-1, productionRule.input] = true
+                    if (array[p-1][s-1].contains(productionRule.firstNonTerminatingSymbol) && array[l-p-1][s+p-1].contains(productionRule.secondNonTerminatingSymbol)) {
+                        array[l-1][s-1].add(productionRule.input)
                     }
                 }
             }
         }
     }
 
-    println(map.toString(n))
+    println(array.toFormattedString())
 
-    return map.has(n-1, 0, grammar.startSymbol)
+    return array[n-1][0].contains(grammar.startSymbol)
 }
 
-fun MutableTripleMap<Int, Int, NonTerminalSymbol, Boolean>.toString(dim: Int): String {
-    val array = asArray(dim)
-    val maxLength = array.maxOf { row ->
+fun Array<Array<MutableSet<NonTerminalSymbol>>>.toFormattedString(): String {
+    val maxLength = maxOf { row ->
         row.maxOf { set ->
             set.joinToString(", ") { it.toString() }.length
         }
     }
-    println(maxLength)
-    return array.joinToString("\n") { row ->
+    return joinToString("\n") { row ->
         row.joinToString(" | ") { set ->
             set.joinToString(", ") { it.toString() }.padEnd(maxLength, ' ')
         }
     }
-}
-
-fun MutableTripleMap<Int, Int, NonTerminalSymbol, Boolean>.asArray(dim: Int): Array<Array<MutableSet<NonTerminalSymbol>>> {
-    val array = Array(dim) { Array (dim) { mutableSetOf<NonTerminalSymbol>() } }
-    forEach { entry ->
-        if (entry.value) {
-            val (l, s, symbol) = entry.key
-            array[l][s].add(symbol)
-        }
-    }
-    return array
 }
