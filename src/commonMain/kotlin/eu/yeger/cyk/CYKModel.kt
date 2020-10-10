@@ -1,13 +1,16 @@
 package eu.yeger.cyk
 
 data class CYKModel(
+    val grammar: Grammar,
     val inputString: Sequence<TerminalSymbol>,
     val grid: List<List<Set<NonTerminalSymbol>>>,
 ) {
 
     constructor(
+        grammar: Grammar,
         inputString: Sequence<TerminalSymbol>,
     ) : this(
+        grammar,
         inputString,
         List(inputString.count()) { rowIndex ->
             List(inputString.count() - rowIndex) {
@@ -20,19 +23,18 @@ data class CYKModel(
         return grid[rowIndex][columnIndex]
     }
 
-    fun add(rowIndex: Int, columnIndex: Int, nonTerminalSymbol: NonTerminalSymbol): CYKModel {
-        val newGrid = grid.mapIndexed { gridRowIndex, row ->
+    fun withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): CYKModel {
+        return grid.mapIndexed { gridRowIndex, gridRow ->
             when (gridRowIndex) {
-                rowIndex -> row.mapIndexed { gridColumnIndex, set ->
+                rowIndex -> gridRow.mapIndexed { gridColumnIndex, nonTerminalSymbolSet ->
                     when (gridColumnIndex) {
-                        columnIndex -> set + nonTerminalSymbol
-                        else -> set
+                        columnIndex -> nonTerminalSymbolSet + nonTerminalSymbol
+                        else -> nonTerminalSymbolSet
                     }
                 }
-                else -> row
+                else -> gridRow
             }
-        }
-        return copy(grid = newGrid)
+        }.let { newGrid -> copy(grid = newGrid) }
     }
 
     override fun toString(): String {
@@ -55,8 +57,11 @@ data class CYKModel(
     }
 }
 
-fun CYKModel.isTrue(): Boolean {
-    return grid.last().first().any { it is StartSymbol }
+val CYKModel.result: Boolean
+    get() = grid.last().first().any { it is StartSymbol }
+
+fun CYKModel.containsSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): Boolean {
+    return get(rowIndex, columnIndex).contains(nonTerminalSymbol)
 }
 
 
