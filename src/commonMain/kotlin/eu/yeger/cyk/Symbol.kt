@@ -18,7 +18,7 @@ data class RegularTerminalSymbol(override val symbol: String) : TerminalSymbol {
 
 interface NonTerminalSymbol : Symbol
 
-data class StartSymbol(override val symbol: String): NonTerminalSymbol {
+data class StartSymbol(override val symbol: String) : NonTerminalSymbol {
     override fun toString() = symbol
 }
 

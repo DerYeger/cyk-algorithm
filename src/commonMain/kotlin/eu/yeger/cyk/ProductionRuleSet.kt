@@ -3,7 +3,7 @@ package eu.yeger.cyk
 data class ProductionRuleSet(
     val nonTerminatingRules: Set<NonTerminatingRule>,
     val terminatingRules: Set<TerminatingRule>
-): Set<ProductionRule> by (nonTerminatingRules + terminatingRules)
+) : Set<ProductionRule> by (nonTerminatingRules + terminatingRules)
 
 @Suppress("UNCHECKED_CAST")
 fun productionRuleSet(

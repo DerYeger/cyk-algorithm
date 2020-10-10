@@ -20,8 +20,6 @@ fun word(word: String): Sequence<TerminalSymbol> {
         .asSequence()
 }
 
-
 fun word(block: () -> String): Sequence<TerminalSymbol> {
     return word(block())
 }
-

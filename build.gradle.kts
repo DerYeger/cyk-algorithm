@@ -1,6 +1,11 @@
+val kotlinResultVersion: String by project
+
 plugins {
-    kotlin("multiplatform") version "1.4.10"
+    kotlin("multiplatform")
+    id("org.jetbrains.dokka")
+    id("org.jlleitschuh.gradle.ktlint")
 }
+
 group = "eu.yeger"
 version = "1.0-SNAPSHOT"
 
@@ -40,7 +45,7 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.9")
+                implementation("com.michael-bull.kotlin-result:kotlin-result:$kotlinResultVersion")
             }
         }
         val commonTest by getting {

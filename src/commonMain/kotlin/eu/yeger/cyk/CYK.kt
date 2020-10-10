@@ -46,7 +46,7 @@ private fun CYKModel.findProductionRulesForNonTerminalSymbols(
 ): CYKModel {
     return grammar.productionRuleSet.nonTerminatingRules.fold(this) { model: CYKModel, rule: NonTerminatingRule ->
         when {
-           model.allowsNonTerminalRuleAt(rule, l = l, s = s, p = p) -> model.withSymbolAt(rule.left, l - 1, s - 1)
+            model.allowsNonTerminalRuleAt(rule, l = l, s = s, p = p) -> model.withSymbolAt(rule.left, l - 1, s - 1)
             else -> model
         }
     }
@@ -58,6 +58,6 @@ private fun CYKModel.allowsNonTerminalRuleAt(
     s: Int,
     p: Int,
 ): Boolean {
-    return this.containsSymbolAt(nonTerminatingRule.firstRight, p - 1, s - 1)
-            && this.containsSymbolAt(nonTerminatingRule.secondRight, l - p - 1, s + p - 1)
+    return this.containsSymbolAt(nonTerminatingRule.firstRight, p - 1, s - 1) &&
+        this.containsSymbolAt(nonTerminatingRule.secondRight, l - p - 1, s + p - 1)
 }
