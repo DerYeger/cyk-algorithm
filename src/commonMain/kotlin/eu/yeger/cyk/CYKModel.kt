@@ -5,7 +5,6 @@ data class CYKModel(
     val word: Sequence<TerminalSymbol>,
     val grid: List<List<Set<NonTerminalSymbol>>>,
 ) {
-
     constructor(
         grammar: Grammar,
         word: Sequence<TerminalSymbol>,
@@ -18,24 +17,6 @@ data class CYKModel(
             }
         }
     )
-
-    operator fun get(rowIndex: Int, columnIndex: Int): Set<NonTerminalSymbol> {
-        return grid[rowIndex][columnIndex]
-    }
-
-    fun withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): CYKModel {
-        return grid.mapIndexed { gridRowIndex, gridRow ->
-            when (gridRowIndex) {
-                rowIndex -> gridRow.mapIndexed { gridColumnIndex, nonTerminalSymbolSet ->
-                    when (gridColumnIndex) {
-                        columnIndex -> nonTerminalSymbolSet + nonTerminalSymbol
-                        else -> nonTerminalSymbolSet
-                    }
-                }
-                else -> gridRow
-            }
-        }.let { newGrid -> copy(grid = newGrid) }
-    }
 
     override fun toString(): String {
         return with(grid) {
@@ -60,8 +41,24 @@ data class CYKModel(
 val CYKModel.result: Boolean
     get() = grid.last().first().any { it is StartSymbol }
 
+operator fun CYKModel.get(rowIndex: Int, columnIndex: Int): Set<NonTerminalSymbol> {
+    return grid[rowIndex][columnIndex]
+}
+
 fun CYKModel.containsSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): Boolean {
     return get(rowIndex, columnIndex).contains(nonTerminalSymbol)
 }
 
-
+fun CYKModel.withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): CYKModel {
+    return grid.mapIndexed { gridRowIndex, gridRow ->
+        when (gridRowIndex) {
+            rowIndex -> gridRow.mapIndexed { gridColumnIndex, nonTerminalSymbolSet ->
+                when (gridColumnIndex) {
+                    columnIndex -> nonTerminalSymbolSet + nonTerminalSymbol
+                    else -> nonTerminalSymbolSet
+                }
+            }
+            else -> gridRow
+        }
+    }.let { newGrid -> copy(grid = newGrid) }
+}
