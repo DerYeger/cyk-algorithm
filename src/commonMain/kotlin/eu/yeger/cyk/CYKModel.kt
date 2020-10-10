@@ -2,18 +2,18 @@ package eu.yeger.cyk
 
 data class CYKModel(
     val grammar: Grammar,
-    val inputString: Sequence<TerminalSymbol>,
+    val word: Sequence<TerminalSymbol>,
     val grid: List<List<Set<NonTerminalSymbol>>>,
 ) {
 
     constructor(
         grammar: Grammar,
-        inputString: Sequence<TerminalSymbol>,
+        word: Sequence<TerminalSymbol>,
     ) : this(
         grammar,
-        inputString,
-        List(inputString.count()) { rowIndex ->
-            List(inputString.count() - rowIndex) {
+        word,
+        List(word.count()) { rowIndex ->
+            List(word.count() - rowIndex) {
                 setOf<NonTerminalSymbol>()
             }
         }

@@ -8,7 +8,7 @@ private constructor(
 ) {
     companion object {
         infix fun derivedFrom(productionsRules: ProductionRuleSet): Grammar {
-            val symbols = productionsRules.map(ProductionRule::input).toSet()
+            val symbols = productionsRules.map(ProductionRule::left).toSet()
             return Grammar(symbols, symbols.first { it is StartSymbol } as StartSymbol, productionsRules)
         }
     }

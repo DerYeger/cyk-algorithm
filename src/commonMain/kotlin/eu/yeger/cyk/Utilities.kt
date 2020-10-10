@@ -13,3 +13,15 @@ infix fun <V, E, T> Result<V, E>.and(result: Result<T, E>): Result<T, E> {
     }
 }
 
+fun word(word: String): Sequence<TerminalSymbol> {
+    return word
+        .split(" ")
+        .map { RegularTerminalSymbol(it) }
+        .asSequence()
+}
+
+
+fun word(block: () -> String): Sequence<TerminalSymbol> {
+    return word(block())
+}
+

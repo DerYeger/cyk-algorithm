@@ -1,28 +1,24 @@
 package eu.yeger.cyk
 
 sealed class ProductionRule(
-    val input: NonTerminalSymbol,
-    val output: Sequence<Symbol>,
-)
+    val left: NonTerminalSymbol,
+    val right: Sequence<Symbol>,
+) {
+    override fun toString(): String {
+        return "$left -> " + right.joinToString(" ")
+    }
+}
 
 class NonTerminatingRule(
     input: NonTerminalSymbol,
-    val firstNonTerminatingSymbol: NonTerminalSymbol,
-    val secondNonTerminatingSymbol: NonTerminalSymbol,
-) : ProductionRule(input, sequenceOf(firstNonTerminatingSymbol, secondNonTerminatingSymbol)) {
-    override fun toString(): String {
-        return "$input -> $firstNonTerminatingSymbol $secondNonTerminatingSymbol"
-    }
-}
+    val firstRight: NonTerminalSymbol,
+    val secondRight: NonTerminalSymbol,
+) : ProductionRule(input, sequenceOf(firstRight, secondRight))
 
 class TerminatingRule(
     input: NonTerminalSymbol,
     val terminalSymbol: TerminalSymbol,
-) : ProductionRule(input, sequenceOf(terminalSymbol)) {
-    override fun toString(): String {
-        return "$input -> $terminalSymbol"
-    }
-}
+) : ProductionRule(input, sequenceOf(terminalSymbol))
 
 infix fun TerminatingRule.produces(terminalSymbol: TerminalSymbol): Boolean {
     return this.terminalSymbol == terminalSymbol
@@ -30,8 +26,4 @@ infix fun TerminatingRule.produces(terminalSymbol: TerminalSymbol): Boolean {
 
 class EmptyProductionRule(
     input: StartSymbol,
-) : ProductionRule(input, sequenceOf(EmptySymbol)) {
-    override fun toString(): String {
-        return "$input -> $EmptySymbol"
-    }
-}
+) : ProductionRule(input, sequenceOf(EmptySymbol))

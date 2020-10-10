@@ -5,15 +5,19 @@ import kotlin.collections.fold
 
 typealias Line = String
 
-private val productionRuleRegex = Regex("[A-Z]+[a-z]*->([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+|${epsilon})")
+private val productionRuleRegex = Regex("[A-Z]+[a-z]* -> ([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+|${epsilon})")
 
-fun parseAsGrammar(string: String, startSymbol: String): Result<Grammar, String> {
-    return parse(string, startSymbol)
+fun grammar(startSymbol: String, block: () -> String): Result<Grammar, String> {
+    return parseAsGrammar(rulesString = block(), startSymbol = startSymbol)
+}
+
+fun parseAsGrammar(rulesString: String, startSymbol: String): Result<Grammar, String> {
+    return parse(rulesString, startSymbol)
         .map { productionRuleSet -> Grammar derivedFrom productionRuleSet }
 }
 
 fun parse(string: String, startSymbol: String): Result<ProductionRuleSet, String> {
-    return string.lines().parseLines(startSymbol)
+    return string.trimIndent().lines().parseLines(startSymbol)
 }
 
 private fun List<Line>.parseLines(startSymbol: String): Result<ProductionRuleSet, String> {
@@ -25,13 +29,14 @@ private fun List<Line>.parseLines(startSymbol: String): Result<ProductionRuleSet
 }
 
 private fun Line.parseLine(startSymbol: String): Result<ProductionRule, String> {
-    return splitIntoComponents()
+    return trim()
+        .splitIntoComponents()
         .andThen { components -> components.asProductionRule(startSymbol) }
 }
 
 private fun Line.splitIntoComponents(): Result<List<String>, String> {
     return when {
-        this matches productionRuleRegex -> Ok(split("->", " "))
+        this matches productionRuleRegex -> Ok(split("->", " ").filter { it.isNotBlank() })
         else -> Err("Invalid production rule: $this")
     }
 }
