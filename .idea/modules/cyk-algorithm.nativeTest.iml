@@ -5,9 +5,9 @@
       <configuration version="3" platform="Native (mingw_x64) " allPlatforms="Native []/Native [mingw_x64]" useProjectSettings="false" isTestModule="true" externalProjectId="cyk-algorithm">
         <dependsOnModuleNames>cyk-algorithm:commonTest</dependsOnModuleNames>
         <sourceSets>
+          <sourceSet>cyk-algorithm.commonTest</sourceSet>
           <sourceSet>cyk-algorithm.commonMain</sourceSet>
           <sourceSet>cyk-algorithm.nativeMain</sourceSet>
-          <sourceSet>cyk-algorithm.commonTest</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <externalSystemTestTasks>

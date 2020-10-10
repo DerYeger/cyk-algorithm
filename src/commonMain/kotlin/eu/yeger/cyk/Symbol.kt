@@ -12,7 +12,7 @@ object EmptyString : TerminalSymbol {
     override fun toString() = symbol
 }
 
-data class CustomTerminalSymbol(override val symbol: String) : TerminalSymbol {
+data class RegularTerminalSymbol(override val symbol: String) : TerminalSymbol {
     override fun toString() = symbol
 }
 

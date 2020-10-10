@@ -1,8 +1,6 @@
 package eu.yeger.cyk
 
 fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
-    if (grammar.validatedOrNull() == null) return false
-
     val n = inputString.count()
     val array = Array(n) {
         Array(n) {
@@ -43,8 +41,10 @@ fun Array<Array<MutableSet<NonTerminalSymbol>>>.toFormattedString(): String {
             set.joinToString(", ") { it.toString() }.length
         }
     }
-    return joinToString("\n") { row ->
-        row.joinToString(" | ") { set ->
+    val columnPadding = " | "
+    val rowPadding = "\n".padEnd(size * maxLength + (size - 1) * columnPadding.length, '-').plus("\n")
+    return joinToString(rowPadding) { row ->
+        row.joinToString(columnPadding) { set ->
             set.joinToString(", ") { it.toString() }.padEnd(maxLength, ' ')
         }
     }
