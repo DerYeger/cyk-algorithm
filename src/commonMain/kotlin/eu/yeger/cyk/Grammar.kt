@@ -7,13 +7,9 @@ private constructor(
     val productionRuleSet: ProductionRuleSet,
 ) {
     companion object {
-        infix fun derivedFrom(productionsRules: ProductionRuleSet): Grammar? {
+        infix fun derivedFrom(productionsRules: ProductionRuleSet): Grammar {
             val symbols = productionsRules.map(ProductionRule::input).toSet()
-
-            val startSymbols = symbols.filterIsInstance<StartSymbol>()
-            if (startSymbols.size != 1) return null // either no or too many start symbols
-
-            return Grammar(symbols, startSymbols.first(), productionsRules)
+            return Grammar(symbols, symbols.first { it is StartSymbol } as StartSymbol, productionsRules)
         }
     }
 }

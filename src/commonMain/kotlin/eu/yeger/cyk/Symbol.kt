@@ -6,8 +6,8 @@ interface Symbol {
 
 interface TerminalSymbol : Symbol
 
-object EmptyString : TerminalSymbol {
-    override val symbol: String = "ε"
+object EmptySymbol : TerminalSymbol {
+    override val symbol: String = epsilon
 
     override fun toString() = symbol
 }

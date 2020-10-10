@@ -30,8 +30,8 @@ infix fun TerminatingRule.produces(terminalSymbol: TerminalSymbol): Boolean {
 
 class EmptyProductionRule(
     input: StartSymbol,
-) : ProductionRule(input, sequenceOf(EmptyString)) {
+) : ProductionRule(input, sequenceOf(EmptySymbol)) {
     override fun toString(): String {
-        return "$input -> $EmptyString"
+        return "$input -> $EmptySymbol"
     }
 }

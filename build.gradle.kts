@@ -38,7 +38,11 @@ kotlin {
             languageSettings.enableLanguageFeature("InlineClasses")
         }
 
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.9")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))

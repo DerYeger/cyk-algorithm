@@ -1,35 +1,27 @@
 package eu.yeger.cyk
 
+import com.github.michaelbull.result.get
 import org.junit.Test
 
 class CYKTests {
 
     @Test
     fun `verify that the cyk algorithm detects word of language`() {
-        val symbols = setOf("NP", "VP", "PP", "V", "P", "N", "Det")
-            .asSymbolMap()
-            .plus("S" to StartSymbol("S"))
-
-        val productionRuleSet = productionRuleSet(
-            nonTerminatingRules = nonTerminatingRules(
-                NonTerminatingRule(symbols["S"]!!, symbols["NP"]!!, symbols["VP"]!!),
-                NonTerminatingRule(symbols["VP"]!!, symbols["VP"]!!, symbols["PP"]!!),
-                NonTerminatingRule(symbols["VP"]!!, symbols["V"]!!, symbols["NP"]!!),
-                NonTerminatingRule(symbols["PP"]!!, symbols["P"]!!, symbols["NP"]!!),
-                NonTerminatingRule(symbols["NP"]!!, symbols["Det"]!!, symbols["N"]!!),
-            ),
-            terminatingRules = terminatingRules(
-                TerminatingRule(symbols["VP"]!!, RegularTerminalSymbol("eats")),
-                TerminatingRule(symbols["NP"]!!, RegularTerminalSymbol("she")),
-                TerminatingRule(symbols["V"]!!, RegularTerminalSymbol("eats")),
-                TerminatingRule(symbols["P"]!!, RegularTerminalSymbol("with")),
-                TerminatingRule(symbols["N"]!!, RegularTerminalSymbol("fish")),
-                TerminatingRule(symbols["N"]!!, RegularTerminalSymbol("fork")),
-                TerminatingRule(symbols["Det"]!!, RegularTerminalSymbol("a")),
-            ),
-        )
-
-        val grammar = requireNotNull(Grammar derivedFrom productionRuleSet)
+        val rules = """
+            S->NP VP
+            VP->VP PP
+            VP->V NP
+            VP->eats
+            PP->P NP
+            NP->Det N
+            NP->she
+            V->eats
+            P->with
+            N->fish
+            N->fork
+            Det->a
+        """.trimIndent()
+        val grammar = parseAsGrammar(rules, "S")
 
         val inputString = sequenceOf(
             RegularTerminalSymbol("she"),
@@ -41,10 +33,6 @@ class CYKTests {
             RegularTerminalSymbol("fork"),
         )
 
-        println(cyk(grammar, inputString))
+        println(cyk(grammar.get()!!, inputString))
     }
-}
-
-private fun Set<String>.asSymbolMap(): Map<String, NonTerminalSymbol> {
-    return associateWith { RegularNonTerminalSymbol(it) }
 }

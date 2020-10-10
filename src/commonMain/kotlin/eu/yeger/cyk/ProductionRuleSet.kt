@@ -2,19 +2,28 @@ package eu.yeger.cyk
 
 data class ProductionRuleSet(
     val nonTerminatingRules: Set<NonTerminatingRule>,
-    val terminatingRules: Set<TerminatingRule>,
-    val emptyProductionRule: EmptyProductionRule?
-): Set<ProductionRule> by (nonTerminatingRules + terminatingRules + setOfNotNull(emptyProductionRule))
+    val terminatingRules: Set<TerminatingRule>
+): Set<ProductionRule> by (nonTerminatingRules + terminatingRules)
+
+@Suppress("UNCHECKED_CAST")
+fun productionRuleSet(
+    productionsRules: List<ProductionRule>,
+): ProductionRuleSet {
+    return productionsRules.groupBy { it::class }.let { groups ->
+        ProductionRuleSet(
+            nonTerminatingRules = groups[NonTerminatingRule::class]?.toSet() as Set<NonTerminatingRule>,
+            terminatingRules = groups[TerminatingRule::class]?.toSet() as Set<TerminatingRule>,
+        )
+    }
+}
 
 fun productionRuleSet(
     nonTerminatingRules: Set<NonTerminatingRule>,
     terminatingRules: Set<TerminatingRule>,
-    emptyProductionRule: EmptyProductionRule? =  null
 ): ProductionRuleSet {
     return ProductionRuleSet(
         nonTerminatingRules = nonTerminatingRules,
         terminatingRules = terminatingRules,
-        emptyProductionRule = emptyProductionRule,
     )
 }
 
@@ -24,8 +33,4 @@ fun nonTerminatingRules(vararg nonTerminatingRules: NonTerminatingRule): Set<Non
 
 fun terminatingRules(vararg terminatingRules: TerminatingRule): Set<TerminatingRule> {
     return setOf(*terminatingRules)
-}
-
-fun emptyProductionRuleFor(startSymbol: StartSymbol): EmptyProductionRule {
-    return EmptyProductionRule(startSymbol)
 }
