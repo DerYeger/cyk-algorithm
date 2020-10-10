@@ -4,7 +4,7 @@ class Grammar
 private constructor(
     val symbols: Set<Symbol>,
     val startSymbol: StartSymbol,
-    val productionsRules: ProductionRuleSet,
+    val productionRuleSet: ProductionRuleSet,
 ) {
     companion object {
         infix fun derivedFrom(productionsRules: ProductionRuleSet): Grammar? {
