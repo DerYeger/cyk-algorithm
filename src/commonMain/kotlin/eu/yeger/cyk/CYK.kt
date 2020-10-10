@@ -2,8 +2,8 @@ package eu.yeger.cyk
 
 fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
     val n = inputString.count()
-    val array = Array(n) {
-        Array(n) {
+    val array = Array(n) { rowIndex ->
+        Array(n - rowIndex) {
             mutableSetOf<NonTerminalSymbol>()
         }
     }
@@ -19,11 +19,14 @@ fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
     val nonTerminatingRules = grammar.productionsRules.filterIsInstance<NonTerminatingRule>()
 
     for (l in 2..n) {
-        for (s in 1..(n-l+1)) {
+        for (s in 1..(n - l + 1)) {
             for (p in 1 until l) {
                 nonTerminatingRules.forEach { productionRule ->
-                    if (array[p-1][s-1].contains(productionRule.firstNonTerminatingSymbol) && array[l-p-1][s+p-1].contains(productionRule.secondNonTerminatingSymbol)) {
-                        array[l-1][s-1].add(productionRule.input)
+                    if (
+                        array[p - 1][s - 1].contains(productionRule.firstNonTerminatingSymbol)
+                        && array[l - p - 1][s + p - 1].contains(productionRule.secondNonTerminatingSymbol)
+                    ) {
+                        array[l - 1][s - 1].add(productionRule.input)
                     }
                 }
             }
@@ -32,7 +35,7 @@ fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
 
     println(array.toFormattedString())
 
-    return array[n-1][0].contains(grammar.startSymbol)
+    return array[n - 1][0].contains(grammar.startSymbol)
 }
 
 fun Array<Array<MutableSet<NonTerminalSymbol>>>.toFormattedString(): String {
@@ -42,10 +45,12 @@ fun Array<Array<MutableSet<NonTerminalSymbol>>>.toFormattedString(): String {
         }
     }
     val columnPadding = " | "
-    val rowPadding = "\n".padEnd(size * maxLength + (size - 1) * columnPadding.length, '-').plus("\n")
-    return joinToString(rowPadding) { row ->
-        row.joinToString(columnPadding) { set ->
+    val firstRowString = "\n".padEnd(size * maxLength + (size - 1) * columnPadding.length + 5, '-').plus("\n")
+    return firstRowString + joinToString(separator = "") { row ->
+        row.joinToString(columnPadding, prefix = "| ", postfix = " |") { set ->
             set.joinToString(", ") { it.toString() }.padEnd(maxLength, ' ')
-        }
+        }.plus("\n")
+            .plus("-".repeat(row.size * maxLength + (row.size - 1) * columnPadding.length + 4))
+            .plus("\n")
     }
 }
