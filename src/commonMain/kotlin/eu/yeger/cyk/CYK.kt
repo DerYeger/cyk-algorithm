@@ -9,24 +9,22 @@ fun cyk(grammar: Grammar, inputString: Sequence<TerminalSymbol>): Boolean {
     }
 
     inputString.forEachIndexed { terminalSymbolIndex, terminalSymbol ->
-        grammar.productionsRules.forEach { productionRule ->
-            if (productionRule is TerminatingRule && productionRule produces terminalSymbol) {
+        grammar.productionsRules.terminatingRules.forEach { productionRule ->
+            if (productionRule produces terminalSymbol) {
                 array[0][terminalSymbolIndex].add(productionRule.input)
             }
         }
     }
 
-    val nonTerminatingRules = grammar.productionsRules.filterIsInstance<NonTerminatingRule>()
-
     for (l in 2..n) {
         for (s in 1..(n - l + 1)) {
             for (p in 1 until l) {
-                nonTerminatingRules.forEach { productionRule ->
+                grammar.productionsRules.nonTerminatingRules.forEach { productionRule ->
                     if (
-                        array[p - 1][s - 1].contains(productionRule.firstNonTerminatingSymbol)
+                        array[p-1][s-1].contains(productionRule.firstNonTerminatingSymbol)
                         && array[l - p - 1][s + p - 1].contains(productionRule.secondNonTerminatingSymbol)
                     ) {
-                        array[l - 1][s - 1].add(productionRule.input)
+                        array[l-1][s-1].add(productionRule.input)
                     }
                 }
             }
