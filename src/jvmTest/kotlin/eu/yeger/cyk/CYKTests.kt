@@ -1,6 +1,5 @@
 package eu.yeger.cyk
 
-import com.github.michaelbull.result.getOrElse
 import org.junit.Test
 import kotlin.test.assertTrue
 

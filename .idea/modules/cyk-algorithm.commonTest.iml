@@ -7,7 +7,6 @@
         <externalSystemTestTasks>
           <externalSystemTestTask>jsBrowserTest|cyk-algorithm:jsTest|js</externalSystemTestTask>
           <externalSystemTestTask>jvmTest|cyk-algorithm:jvmTest|jvm</externalSystemTestTask>
-          <externalSystemTestTask>nativeTest|cyk-algorithm:nativeTest|native</externalSystemTestTask>
         </externalSystemTestTasks>
         <compilerSettings>
           <option name="additionalArguments" value="-XXLanguage:+InlineClasses" />
