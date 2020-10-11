@@ -1,5 +1,7 @@
-package eu.yeger.cyk
+package eu.yeger.cyk.parser
 
+import eu.yeger.cyk.*
+import eu.yeger.cyk.model.*
 import kotlin.collections.fold
 
 private val productionRuleRegex = Regex("[A-Z]+[a-z]* -> ([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+|$epsilon)")
@@ -46,7 +48,7 @@ private fun List<String>.asProductionRule(startSymbol: String): Result<Productio
     return when (size) {
         3 -> asNonTerminatingProductionRule(inputSymbol)
         2 -> asTerminatingProductionRule(inputSymbol)
-        else -> fail("Invalid component amount! Must be 2 or 3")
+        else -> fail("Invalid component amount ($size)! Must be 2 or 3")
     }
 }
 

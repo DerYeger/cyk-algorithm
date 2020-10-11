@@ -1,4 +1,6 @@
-package eu.yeger.cyk
+package eu.yeger.cyk.model
+
+import eu.yeger.cyk.epsilon
 
 interface Symbol {
     val symbol: String

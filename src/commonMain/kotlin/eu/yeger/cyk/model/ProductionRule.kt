@@ -1,4 +1,4 @@
-package eu.yeger.cyk
+package eu.yeger.cyk.model
 
 sealed class ProductionRule(
     val left: NonTerminalSymbol,

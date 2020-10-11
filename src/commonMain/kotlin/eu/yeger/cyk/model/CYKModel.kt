@@ -1,4 +1,4 @@
-package eu.yeger.cyk
+package eu.yeger.cyk.model
 
 data class CYKModel(
     val grammar: Grammar,

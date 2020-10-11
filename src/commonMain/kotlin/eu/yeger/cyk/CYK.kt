@@ -1,22 +1,28 @@
 package eu.yeger.cyk
 
+import eu.yeger.cyk.model.*
+import eu.yeger.cyk.model.withSymbolAt
+
 fun cyk(
     inputString: String,
     block: () -> Result<Grammar>,
-): Result<Boolean> {
+): Result<CYKModel> {
     return block().map { grammar -> cyk(word(inputString), grammar) }
 }
 
 fun cyk(
     word: Word,
     grammar: Grammar,
-): Boolean {
-    return (0..word.count()).fold(CYKModel(grammar, word)) { cykModel: CYKModel, l: Int ->
+): CYKModel {
+    if (word.count() == 1 && word.first().symbol.isEmpty() && grammar.includesEmptyProductionRule) {
+        return emptyProductionRuleCYKModel(word, grammar)
+    }
+    return (0..word.count()).fold(CYKModel(word, grammar)) { cykModel: CYKModel, l: Int ->
         when (l) {
             0 -> cykModel.propagateTerminalProductionRules()
             else -> cykModel.propagateNonTerminalProductionRules(l + 1)
         }
-    }.result
+    }
 }
 
 private fun CYKModel.propagateTerminalProductionRules(): CYKModel {

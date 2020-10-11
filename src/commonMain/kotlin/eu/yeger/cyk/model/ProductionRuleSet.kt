@@ -1,4 +1,4 @@
-package eu.yeger.cyk
+package eu.yeger.cyk.model
 
 data class ProductionRuleSet(
     val nonTerminatingRules: Set<NonTerminatingRule>,
