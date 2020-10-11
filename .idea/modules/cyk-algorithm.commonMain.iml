@@ -5,7 +5,7 @@
       <configuration version="3" platform="Common (experimental) " allPlatforms="JS []/JVM [1.6]/Native []/Native [general]" useProjectSettings="false" isTestModule="false" externalProjectId="cyk-algorithm">
         <newMppModelJpsModuleKind>SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <compilerSettings>
-          <option name="additionalArguments" value="-XXLanguage:+InlineClasses" />
+          <option name="additionalArguments" value="-Xexplicit-api=strict -XXLanguage:+InlineClasses" />
         </compilerSettings>
         <compilerArguments>
           <option name="languageVersion" value="1.4" />

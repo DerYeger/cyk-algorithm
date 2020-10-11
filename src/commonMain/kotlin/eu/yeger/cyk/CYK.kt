@@ -3,14 +3,14 @@ package eu.yeger.cyk
 import eu.yeger.cyk.model.*
 import eu.yeger.cyk.model.withSymbolAt
 
-fun cyk(
+public fun cyk(
     inputString: String,
     block: () -> Result<Grammar>,
 ): Result<CYKModel> {
     return block().map { grammar -> cyk(word(inputString), grammar) }
 }
 
-fun cyk(
+public fun cyk(
     word: Word,
     grammar: Grammar,
 ): CYKModel {

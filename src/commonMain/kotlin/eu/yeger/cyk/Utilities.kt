@@ -1,12 +1,12 @@
 package eu.yeger.cyk
 
-import eu.yeger.cyk.model.RegularTerminalSymbol
+import eu.yeger.cyk.model.TerminalSymbol
 
-const val epsilon: String = "ε"
+internal const val epsilon: String = "ε"
 
-fun word(word: String): Word {
+public fun word(word: String): Word {
     return word
         .split(" ")
-        .map { RegularTerminalSymbol(it) }
+        .map { TerminalSymbol(it) }
         .asSequence()
 }

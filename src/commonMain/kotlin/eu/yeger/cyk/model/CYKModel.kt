@@ -3,12 +3,13 @@ package eu.yeger.cyk.model
 import eu.yeger.cyk.Word
 import eu.yeger.cyk.epsilon
 
-data class CYKModel(
+public data class CYKModel
+internal constructor(
     val word: Word,
     val grammar: Grammar,
     val grid: List<List<Set<NonTerminalSymbol>>>,
 ) {
-    constructor(
+    internal constructor(
         word: Word,
         grammar: Grammar,
     ) : this(
@@ -53,14 +54,14 @@ data class CYKModel(
     }
 }
 
-val CYKModel.result: Boolean
+public val CYKModel.result: Boolean
     get() = grid.last().first().any { it is StartSymbol }
 
-operator fun CYKModel.get(rowIndex: Int, columnIndex: Int): Set<NonTerminalSymbol> {
+public operator fun CYKModel.get(rowIndex: Int, columnIndex: Int): Set<NonTerminalSymbol> {
     return grid[rowIndex][columnIndex]
 }
 
-fun CYKModel.containsSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): Boolean {
+public fun CYKModel.containsSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): Boolean {
     return get(rowIndex, columnIndex).contains(nonTerminalSymbol)
 }
 

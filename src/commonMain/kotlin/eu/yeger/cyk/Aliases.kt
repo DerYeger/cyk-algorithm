@@ -2,6 +2,6 @@ package eu.yeger.cyk
 
 import eu.yeger.cyk.model.TerminalSymbol
 
-typealias Line = String
+internal typealias Line = String
 
-typealias Word = Sequence<TerminalSymbol>
+public typealias Word = Sequence<TerminalSymbol>

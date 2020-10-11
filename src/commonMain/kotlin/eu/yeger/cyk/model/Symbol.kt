@@ -1,29 +1,19 @@
 package eu.yeger.cyk.model
 
-import eu.yeger.cyk.epsilon
-
-interface Symbol {
-    val symbol: String
+public interface Symbol {
+    public val symbol: String
 }
 
-interface TerminalSymbol : Symbol
-
-object EmptySymbol : TerminalSymbol {
-    override val symbol: String = epsilon
-
-    override fun toString() = symbol
+public data class TerminalSymbol(override val symbol: String) : Symbol {
+    override fun toString(): String = symbol
 }
 
-data class RegularTerminalSymbol(override val symbol: String) : TerminalSymbol {
-    override fun toString() = symbol
+public interface NonTerminalSymbol : Symbol
+
+public data class StartSymbol(override val symbol: String) : NonTerminalSymbol {
+    override fun toString(): String = symbol
 }
 
-interface NonTerminalSymbol : Symbol
-
-data class StartSymbol(override val symbol: String) : NonTerminalSymbol {
-    override fun toString() = symbol
-}
-
-data class RegularNonTerminalSymbol(override val symbol: String) : NonTerminalSymbol {
-    override fun toString() = symbol
+public data class RegularNonTerminalSymbol(override val symbol: String) : NonTerminalSymbol {
+    override fun toString(): String = symbol
 }

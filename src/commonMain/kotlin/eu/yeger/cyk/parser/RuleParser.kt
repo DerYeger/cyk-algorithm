@@ -7,7 +7,7 @@ private val startSymbolRegex = Regex("[A-Z]+[a-z]*")
 
 private val productionRuleRegex = Regex("[A-Z]+[a-z]* -> ([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+)")
 
-fun grammar(
+public fun grammar(
     startSymbol: String,
     includeEmptyProductionRule: Boolean = false,
     block: () -> String,
@@ -19,7 +19,7 @@ fun grammar(
     )
 }
 
-fun parseAsGrammar(
+public fun parseAsGrammar(
     startSymbol: String,
     includeEmptyProductionRule: Boolean = false,
     rulesString: String,
@@ -34,7 +34,7 @@ fun parseAsGrammar(
         }
 }
 
-fun parse(
+public fun parse(
     startSymbol: String,
     rulesString: String,
 ): Result<ProductionRuleSet> {
@@ -93,8 +93,8 @@ private fun List<String>.asNonTerminatingProductionRule(inputSymbol: NonTerminal
 
 private fun List<String>.asTerminatingProductionRule(inputSymbol: NonTerminalSymbol): Result<TerminatingRule> {
     val outputSymbol = when (val terminalSymbol = get(1)) {
-        epsilon -> RegularTerminalSymbol(terminalSymbol)
-        else -> RegularTerminalSymbol(terminalSymbol)
+        epsilon -> TerminalSymbol(terminalSymbol)
+        else -> TerminalSymbol(terminalSymbol)
     }
     return succeed(TerminatingRule(inputSymbol, outputSymbol))
 }
