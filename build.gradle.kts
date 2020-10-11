@@ -55,3 +55,9 @@ kotlin {
         }
     }
 }
+
+tasks {
+    build {
+        dependsOn(ktlintFormat)
+    }
+}

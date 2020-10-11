@@ -6,8 +6,8 @@
         <dependsOnModuleNames>cyk-algorithm:commonTest</dependsOnModuleNames>
         <sourceSets>
           <sourceSet>cyk-algorithm.jsMain</sourceSet>
-          <sourceSet>cyk-algorithm.commonTest</sourceSet>
           <sourceSet>cyk-algorithm.commonMain</sourceSet>
+          <sourceSet>cyk-algorithm.commonTest</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <externalSystemTestTasks>

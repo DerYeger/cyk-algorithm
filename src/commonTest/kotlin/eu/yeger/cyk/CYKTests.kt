@@ -1,12 +1,12 @@
 package eu.yeger.cyk
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class CYKTests {
 
     @Test
-    fun `verify that the cyk algorithm detects word of language`() {
+    fun verifyThatTheCYKAlgorithmDetectsWordOfLanguage() {
         assertTrue {
             val grammar = grammar("S") {
                 """
