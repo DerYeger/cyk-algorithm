@@ -2,8 +2,6 @@ package eu.yeger.cyk
 
 import kotlin.collections.fold
 
-typealias Line = String
-
 private val productionRuleRegex = Regex("[A-Z]+[a-z]* -> ([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+|$epsilon)")
 
 fun grammar(startSymbol: String, block: () -> String): Result<Grammar> {

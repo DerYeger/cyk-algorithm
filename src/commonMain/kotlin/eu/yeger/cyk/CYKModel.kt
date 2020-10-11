@@ -49,7 +49,7 @@ fun CYKModel.containsSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: In
     return get(rowIndex, columnIndex).contains(nonTerminalSymbol)
 }
 
-fun CYKModel.withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): CYKModel {
+internal fun CYKModel.withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): CYKModel {
     return grid.mapIndexed { gridRowIndex, gridRow ->
         when (gridRowIndex) {
             rowIndex -> gridRow.mapIndexed { gridColumnIndex, nonTerminalSymbolSet ->

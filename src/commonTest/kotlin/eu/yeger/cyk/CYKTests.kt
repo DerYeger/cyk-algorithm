@@ -8,8 +8,9 @@ class CYKTests {
     @Test
     fun verifyThatTheCYKAlgorithmDetectsWordOfLanguage() {
         assertTrue {
-            val grammar = grammar("S") {
-                """
+            cyk("she eats a fish with a fork") {
+                grammar("S") {
+                    """
                     S -> NP VP
                     VP -> VP PP
                     VP -> V NP
@@ -22,10 +23,9 @@ class CYKTests {
                     N -> fish
                     N -> fork
                     Det -> a
-                """.trimIndent()
-            }.getOrElse { error("Grammar was invalid") }
-            val word = word { "she eats a fish with a fork" }
-            cyk(grammar, word)
+                    """.trimIndent()
+                }
+            }.getOrElse { error(it) }
         }
     }
 }

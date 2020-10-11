@@ -1,16 +1,22 @@
 package eu.yeger.cyk
 
-fun cyk(grammar: Grammar, word: Sequence<TerminalSymbol>): Boolean {
-    val cykModel = (0..word.count()).fold(CYKModel(grammar, word)) { cykModel: CYKModel, l: Int ->
+fun cyk(
+    inputString: String,
+    block: () -> Result<Grammar>,
+): Result<Boolean> {
+    return block().map { grammar -> cyk(word(inputString), grammar) }
+}
+
+fun cyk(
+    word: Word,
+    grammar: Grammar,
+): Boolean {
+    return (0..word.count()).fold(CYKModel(grammar, word)) { cykModel: CYKModel, l: Int ->
         when (l) {
             0 -> cykModel.propagateTerminalProductionRules()
             else -> cykModel.propagateNonTerminalProductionRules(l + 1)
         }
-    }
-
-    println(cykModel)
-
-    return cykModel.result
+    }.result
 }
 
 private fun CYKModel.propagateTerminalProductionRules(): CYKModel {
@@ -31,7 +37,9 @@ private fun CYKModel.findProductionRulesForTerminalSymbol(
     }
 }
 
-private fun CYKModel.propagateNonTerminalProductionRules(l: Int): CYKModel {
+private fun CYKModel.propagateNonTerminalProductionRules(
+    l: Int,
+): CYKModel {
     return (1..(word.count() - l + 1)).fold(this) { rowModel: CYKModel, s: Int ->
         (1 until l).fold(rowModel) { columnModel: CYKModel, p: Int ->
             columnModel.findProductionRulesForNonTerminalSymbols(l = l, s = s, p = p)

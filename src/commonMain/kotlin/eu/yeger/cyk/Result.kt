@@ -41,9 +41,9 @@ fun <T : Any> Result<T>.getOr(fallback: T): T {
     }
 }
 
-fun <T : Any> Result<T>.getOrElse(block: () -> T): T {
+fun <T : Any> Result<T>.getOrElse(block: (String) -> T): T {
     return when (this) {
         is Result.Success -> data
-        is Result.Failure -> block()
+        is Result.Failure -> block(error)
     }
 }
