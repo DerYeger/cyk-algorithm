@@ -23,7 +23,3 @@ class TerminatingRule(
 infix fun TerminatingRule.produces(terminalSymbol: TerminalSymbol): Boolean {
     return this.terminalSymbol == terminalSymbol
 }
-
-class EmptyProductionRule(
-    input: StartSymbol,
-) : ProductionRule(input, sequenceOf(EmptySymbol))

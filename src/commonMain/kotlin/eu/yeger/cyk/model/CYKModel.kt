@@ -1,33 +1,48 @@
 package eu.yeger.cyk.model
 
+import eu.yeger.cyk.Word
+import eu.yeger.cyk.epsilon
+
 data class CYKModel(
+    val word: Word,
     val grammar: Grammar,
-    val word: Sequence<TerminalSymbol>,
     val grid: List<List<Set<NonTerminalSymbol>>>,
 ) {
     constructor(
+        word: Word,
         grammar: Grammar,
-        word: Sequence<TerminalSymbol>,
     ) : this(
-        grammar,
         word,
+        grammar,
         List(word.count()) { rowIndex ->
             List(word.count() - rowIndex) {
                 setOf<NonTerminalSymbol>()
             }
-        }
+        },
     )
 
     override fun toString(): String {
         return with(grid) {
-            val maxLength = maxOf { row ->
+            val maxRuleSetLength = maxOf { row ->
                 row.maxOf { set ->
-                    set.joinToString(", ") { it.toString() }.length
+                    set.joinToString(", ").length
                 }
             }
+            val maxTerminalSymbolLength = word.maxOf { terminalSymbol ->
+                terminalSymbol.toString().length
+            }
+            val maxLength = maxOf(maxRuleSetLength, maxTerminalSymbolLength)
+
             val columnPadding = " | "
-            val firstRowString = "\n".padEnd(size * maxLength + (size - 1) * columnPadding.length + 5, '-').plus("\n")
-            firstRowString + joinToString(separator = "") { row ->
+            val wordRowString = word.joinToString(columnPadding, prefix = "| ", postfix = " |") { nonTerminalSymbol ->
+                when {
+                    nonTerminalSymbol.symbol.isEmpty() -> epsilon
+                    else -> nonTerminalSymbol.toString()
+                }.padEnd(maxLength, ' ')
+            }.plus("\n")
+            val wordRowSeparator = "".padEnd(size * maxLength + (size - 1) * columnPadding.length + 4, '-').plus("\n")
+
+            wordRowSeparator + wordRowString + wordRowSeparator.repeat(2) + joinToString(separator = "") { row ->
                 row.joinToString(columnPadding, prefix = "| ", postfix = " |") { set ->
                     set.joinToString(", ") { it.toString() }.padEnd(maxLength, ' ')
                 }.plus("\n")
@@ -61,4 +76,15 @@ internal fun CYKModel.withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowInde
             else -> gridRow
         }
     }.let { newGrid -> copy(grid = newGrid) }
+}
+
+internal fun emptyProductionRuleCYKModel(
+    word: Word,
+    grammar: Grammar,
+): CYKModel {
+    return CYKModel(
+        grammar = grammar,
+        word = word,
+        grid = listOf(listOf(setOf(grammar.startSymbol)))
+    )
 }

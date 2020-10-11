@@ -2,21 +2,56 @@ package eu.yeger.cyk.parser
 
 import eu.yeger.cyk.*
 import eu.yeger.cyk.model.*
-import kotlin.collections.fold
 
-private val productionRuleRegex = Regex("[A-Z]+[a-z]* -> ([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+|$epsilon)")
+private val startSymbolRegex = Regex("[A-Z]+[a-z]*")
 
-fun grammar(startSymbol: String, block: () -> String): Result<Grammar> {
-    return parseAsGrammar(rulesString = block(), startSymbol = startSymbol)
+private val productionRuleRegex = Regex("[A-Z]+[a-z]* -> ([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+)")
+
+fun grammar(
+    startSymbol: String,
+    includeEmptyProductionRule: Boolean = false,
+    block: () -> String,
+): Result<Grammar> {
+    return parseAsGrammar(
+        startSymbol = startSymbol,
+        includeEmptyProductionRule = includeEmptyProductionRule,
+        rulesString = block(),
+    )
 }
 
-fun parseAsGrammar(rulesString: String, startSymbol: String): Result<Grammar> {
-    return parse(rulesString, startSymbol)
-        .map { productionRuleSet -> Grammar derivedFrom productionRuleSet }
+fun parseAsGrammar(
+    startSymbol: String,
+    includeEmptyProductionRule: Boolean = false,
+    rulesString: String,
+): Result<Grammar> {
+    return parse(startSymbol = startSymbol, rulesString = rulesString)
+        .map { productionRuleSet ->
+            Grammar(
+                startSymbol = StartSymbol(startSymbol),
+                includesEmptyProductionRule = includeEmptyProductionRule,
+                productionRuleSet = productionRuleSet,
+            )
+        }
 }
 
-fun parse(string: String, startSymbol: String): Result<ProductionRuleSet> {
-    return string.trimIndent().lines().parseLines(startSymbol)
+fun parse(
+    startSymbol: String,
+    rulesString: String,
+): Result<ProductionRuleSet> {
+    return validateStartSymbol(startSymbol)
+        .andThen { validatedStartSymbol ->
+            rulesString.trimIndent()
+                .lines()
+                .filter { it.isNotBlank() }
+                .parseLines(validatedStartSymbol)
+        }
+}
+
+private fun validateStartSymbol(startSymbol: String): Result<String> {
+    return when {
+        startSymbol matches startSymbolRegex -> succeed(startSymbol)
+        else -> fail("Invalid start symbol: $startSymbol")
+    }
 }
 
 private fun List<Line>.parseLines(startSymbol: String): Result<ProductionRuleSet> {
