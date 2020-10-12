@@ -65,13 +65,3 @@ private fun CYKModel.findProductionRulesForNonTerminalSymbols(
         }
     }
 }
-
-private fun CYKModel.allowsNonTerminalRuleAt(
-    nonTerminatingRule: NonTerminatingRule,
-    l: Int,
-    s: Int,
-    p: Int,
-): Boolean {
-    return this.containsSymbolAt(nonTerminatingRule.firstRight, p - 1, s - 1) &&
-        this.containsSymbolAt(nonTerminatingRule.secondRight, l - p - 1, s + p - 1)
-}

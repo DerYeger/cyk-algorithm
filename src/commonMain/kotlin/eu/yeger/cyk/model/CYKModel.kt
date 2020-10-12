@@ -65,6 +65,16 @@ public fun CYKModel.containsSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIn
     return get(rowIndex, columnIndex).contains(nonTerminalSymbol)
 }
 
+internal fun CYKModel.allowsNonTerminalRuleAt(
+    nonTerminatingRule: NonTerminatingRule,
+    l: Int,
+    s: Int,
+    p: Int,
+): Boolean {
+    return this.containsSymbolAt(nonTerminatingRule.firstRight, p - 1, s - 1) &&
+        this.containsSymbolAt(nonTerminatingRule.secondRight, l - p - 1, s + p - 1)
+}
+
 internal fun CYKModel.withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): CYKModel {
     return grid.mapIndexed { gridRowIndex, gridRow ->
         when (gridRowIndex) {
