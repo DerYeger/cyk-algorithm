@@ -1,7 +1,6 @@
 package eu.yeger.cyk
 
 import eu.yeger.cyk.model.*
-import eu.yeger.cyk.model.emptyProductionRuleCYKModel
 
 public fun runningCYK(
     inputString: String,
@@ -15,15 +14,7 @@ public fun runningCYK(
     grammar: Grammar,
 ): List<CYKState> {
     if (word.count() == 1 && word.first().symbol.isEmpty() && grammar.includesEmptyProductionRule) {
-        return listOf(
-            CYKStep(
-                cykModel = emptyProductionRuleCYKModel(word, grammar),
-                productionRule = TerminatingRule(grammar.startSymbol, TerminalSymbol(epsilon)),
-                ruleWasApplied = true,
-                sourceCoordinates = Coordinates(0, 0),
-                targetCoordinates = listOf(Coordinates(-1, 0))
-            )
-        )
+        return emptyProductionRuleCYKStates(word, grammar)
     }
     val cykStartState = CYKStart(CYKModel(word, grammar))
     return (0..word.count()).fold(listOf(cykStartState)) { previousSteps: List<CYKState>, l: Int ->
@@ -47,8 +38,14 @@ private fun List<CYKState>.runningFindProductionRulesForTerminalSymbol(
     return last().cykModel.grammar.productionRuleSet.terminatingRules.fold(this) { previousSteps: List<CYKState>, terminatingRule: TerminatingRule ->
         val lastStep = previousSteps.last()
         previousSteps + when {
-            terminatingRule produces terminalSymbol -> lastStep.stepWithRuleAt(terminatingRule, 0, terminalSymbolIndex, listOf(Coordinates(-1, terminalSymbolIndex)))
-            else -> lastStep.stepWithoutRuleAt(terminatingRule, 0, terminalSymbolIndex, listOf(Coordinates(-1, terminalSymbolIndex)))
+            terminatingRule produces terminalSymbol -> lastStep.stepWithRuleAt(terminatingRule,
+                0,
+                terminalSymbolIndex,
+                listOf(Coordinates(-1, terminalSymbolIndex)))
+            else -> lastStep.stepWithoutRuleAt(terminatingRule,
+                0,
+                terminalSymbolIndex,
+                listOf(Coordinates(-1, terminalSymbolIndex)))
         }
     }
 }
@@ -71,8 +68,17 @@ private fun List<CYKState>.runningFindProductionRulesForNonTerminalSymbols(
     return last().cykModel.grammar.productionRuleSet.nonTerminatingRules.fold(this) { previousSteps: List<CYKState>, nonTerminatingRule: NonTerminatingRule ->
         val lastStep = previousSteps.last()
         previousSteps + when {
-            lastStep.cykModel.allowsNonTerminalRuleAt(nonTerminatingRule, l = l, s = s, p = p) -> lastStep.stepWithRuleAt(nonTerminatingRule, l - 1, s - 1, listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
-            else -> lastStep.stepWithoutRuleAt(nonTerminatingRule, l - 1, s - 1, listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
+            lastStep.cykModel.allowsNonTerminalRuleAt(nonTerminatingRule,
+                l = l,
+                s = s,
+                p = p) -> lastStep.stepWithRuleAt(nonTerminatingRule,
+                l - 1,
+                s - 1,
+                listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
+            else -> lastStep.stepWithoutRuleAt(nonTerminatingRule,
+                l - 1,
+                s - 1,
+                listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
         }
     }
 }
