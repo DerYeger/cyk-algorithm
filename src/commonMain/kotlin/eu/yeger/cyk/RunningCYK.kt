@@ -2,69 +2,77 @@ package eu.yeger.cyk
 
 import eu.yeger.cyk.model.*
 import eu.yeger.cyk.model.emptyProductionRuleCYKModel
-import eu.yeger.cyk.model.withSymbolAt
 
 public fun runningCYK(
     inputString: String,
     block: () -> Result<Grammar>,
-): Result<List<CYKModel>> {
+): Result<List<CYKState>> {
     return block().map { grammar -> runningCYK(word(inputString), grammar) }
 }
 
 public fun runningCYK(
     word: Word,
     grammar: Grammar,
-): List<CYKModel> {
+): List<CYKState> {
     if (word.count() == 1 && word.first().symbol.isEmpty() && grammar.includesEmptyProductionRule) {
-        return listOf(emptyProductionRuleCYKModel(word, grammar))
+        return listOf(
+            CYKStep(
+                cykModel = emptyProductionRuleCYKModel(word, grammar),
+                productionRule = TerminatingRule(grammar.startSymbol, TerminalSymbol(epsilon)),
+                ruleWasApplied = true,
+                sourceCoordinates = Coordinates(0, 0),
+                targetCoordinates = listOf(Coordinates(-1, 0))
+            )
+        )
     }
-    return (0..word.count()).fold(listOf(CYKModel(word, grammar))) { previousModels: List<CYKModel>, l: Int ->
+    val cykStartState = CYKStart(CYKModel(word, grammar))
+    return (0..word.count()).fold(listOf(cykStartState)) { previousSteps: List<CYKState>, l: Int ->
         when (l) {
-            0 -> previousModels.runningPropagateTerminalProductionRules()
-            else -> previousModels.runningPropagateNonTerminalProductionRules(l + 1)
+            0 -> previousSteps.runningPropagateTerminalProductionRules()
+            else -> previousSteps.runningPropagateNonTerminalProductionRules(l + 1)
         }
     }
 }
 
-private fun List<CYKModel>.runningPropagateTerminalProductionRules(): List<CYKModel> {
-    return last().word.foldIndexed(this) { terminalSymbolIndex: Int, previousModels: List<CYKModel>, terminalSymbol: TerminalSymbol ->
-        previousModels.runningFindProductionRulesForTerminalSymbol(terminalSymbol, terminalSymbolIndex)
+private fun List<CYKState>.runningPropagateTerminalProductionRules(): List<CYKState> {
+    return last().cykModel.word.foldIndexed(this) { terminalSymbolIndex: Int, previousSteps: List<CYKState>, terminalSymbol: TerminalSymbol ->
+        previousSteps.runningFindProductionRulesForTerminalSymbol(terminalSymbol, terminalSymbolIndex)
     }
 }
 
-private fun List<CYKModel>.runningFindProductionRulesForTerminalSymbol(
+private fun List<CYKState>.runningFindProductionRulesForTerminalSymbol(
     terminalSymbol: TerminalSymbol,
     terminalSymbolIndex: Int,
-): List<CYKModel> {
-    return last().grammar.productionRuleSet.terminatingRules.fold(this) { previousModels: List<CYKModel>, terminatingRule: TerminatingRule ->
-        val lastModel = previousModels.last()
-        previousModels + when {
-            terminatingRule produces terminalSymbol -> lastModel.withSymbolAt(terminatingRule.left, 0, terminalSymbolIndex)
-            else -> lastModel
+): List<CYKState> {
+    return last().cykModel.grammar.productionRuleSet.terminatingRules.fold(this) { previousSteps: List<CYKState>, terminatingRule: TerminatingRule ->
+        val lastStep = previousSteps.last()
+        previousSteps + when {
+            terminatingRule produces terminalSymbol -> lastStep.stepWithRuleAt(terminatingRule, 0, terminalSymbolIndex, listOf(Coordinates(-1, terminalSymbolIndex)))
+            else -> lastStep.stepWithoutRuleAt(terminatingRule, 0, terminalSymbolIndex, listOf(Coordinates(-1, terminalSymbolIndex)))
         }
     }
 }
 
-private fun List<CYKModel>.runningPropagateNonTerminalProductionRules(
+private fun List<CYKState>.runningPropagateNonTerminalProductionRules(
     l: Int,
-): List<CYKModel> {
-    return (1..(last().word.count() - l + 1)).fold(this) { rowModels: List<CYKModel>, s: Int ->
-        (1 until l).fold(rowModels) { columnModels: List<CYKModel>, p: Int ->
-            columnModels.runningFindProductionRulesForNonTerminalSymbols(l = l, s = s, p = p)
+): List<CYKState> {
+    return (1..(last().cykModel.word.count() - l + 1)).fold(this) { rowSteps: List<CYKState>, s: Int ->
+        (1 until l).fold(rowSteps) { columnSteps: List<CYKState>, p: Int ->
+            columnSteps.runningFindProductionRulesForNonTerminalSymbols(l = l, s = s, p = p)
         }
     }
 }
 
-private fun List<CYKModel>.runningFindProductionRulesForNonTerminalSymbols(
+private fun List<CYKState>.runningFindProductionRulesForNonTerminalSymbols(
     l: Int,
     s: Int,
     p: Int,
-): List<CYKModel> {
-    return last().grammar.productionRuleSet.nonTerminatingRules.fold(this) { previousModels: List<CYKModel>, rule: NonTerminatingRule ->
-        val lastModel = previousModels.last()
-        previousModels + when {
-            lastModel.allowsNonTerminalRuleAt(rule, l = l, s = s, p = p) -> lastModel.withSymbolAt(rule.left, l - 1, s - 1)
-            else -> lastModel
+): List<CYKState> {
+    return last().cykModel.grammar.productionRuleSet.nonTerminatingRules.fold(this) { previousSteps: List<CYKState>, nonTerminatingRule: NonTerminatingRule ->
+        val lastStep = previousSteps.last()
+        previousSteps + when {
+            lastStep.cykModel.allowsNonTerminalRuleAt(nonTerminatingRule, l = l, s = s, p = p) -> lastStep.stepWithRuleAt(nonTerminatingRule, l - 1, s - 1, listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
+            else -> lastStep.stepWithoutRuleAt(nonTerminatingRule, l - 1, s - 1, listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
         }
     }
 }
