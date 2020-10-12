@@ -55,7 +55,7 @@ internal constructor(
 }
 
 public val CYKModel.result: Boolean
-    get() = grid.last().first().any { it is StartSymbol }
+    get() = grid.last().first().contains(grammar.startSymbol)
 
 public operator fun CYKModel.get(rowIndex: Int, columnIndex: Int): Set<NonTerminalSymbol> {
     return grid[rowIndex][columnIndex]
