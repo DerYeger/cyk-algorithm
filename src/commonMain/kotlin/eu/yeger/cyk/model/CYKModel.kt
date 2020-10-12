@@ -31,7 +31,7 @@ internal constructor(
             }
             val maxTerminalSymbolLength = word.maxOf { terminalSymbol ->
                 terminalSymbol.toString().length
-            }
+            }.coerceAtLeast(epsilon.length)
             val maxLength = maxOf(maxRuleSetLength, maxTerminalSymbolLength)
 
             val columnPadding = " | "
