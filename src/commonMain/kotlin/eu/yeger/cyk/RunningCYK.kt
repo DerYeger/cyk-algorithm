@@ -6,18 +6,15 @@ public fun runningCYK(
     inputString: String,
     block: () -> Result<Grammar>,
 ): Result<List<CYKState>> {
-    return block().map { grammar -> runningCYK(word(inputString), grammar) }
+    return block().map { grammar -> runningCYK(Word(inputString), grammar) }
 }
 
 public fun runningCYK(
     word: Word,
     grammar: Grammar,
 ): List<CYKState> {
-    if (word.count() == 1 && word.first().symbol.isEmpty() && grammar.includesEmptyProductionRule) {
-        return emptyProductionRuleCYKStates(word, grammar)
-    }
     val cykStartState = CYKStart(CYKModel(word, grammar))
-    return (0..word.count()).fold(listOf(cykStartState)) { previousSteps: List<CYKState>, l: Int ->
+    return (0..word.size).fold(listOf(cykStartState)) { previousSteps: List<CYKState>, l: Int ->
         when (l) {
             0 -> previousSteps.runningPropagateTerminalProductionRules()
             else -> previousSteps.runningPropagateNonTerminalProductionRules(l + 1)
@@ -53,7 +50,7 @@ private fun List<CYKState>.runningFindProductionRulesForTerminalSymbol(
 private fun List<CYKState>.runningPropagateNonTerminalProductionRules(
     l: Int,
 ): List<CYKState> {
-    return (1..(last().cykModel.word.count() - l + 1)).fold(this) { rowSteps: List<CYKState>, s: Int ->
+    return (1..(last().cykModel.word.size - l + 1)).fold(this) { rowSteps: List<CYKState>, s: Int ->
         (1 until l).fold(rowSteps) { columnSteps: List<CYKState>, p: Int ->
             columnSteps.runningFindProductionRulesForNonTerminalSymbols(l = l, s = s, p = p)
         }

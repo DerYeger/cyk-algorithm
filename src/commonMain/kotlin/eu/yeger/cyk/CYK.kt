@@ -7,17 +7,14 @@ public fun cyk(
     inputString: String,
     block: () -> Result<Grammar>,
 ): Result<CYKModel> {
-    return block().map { grammar -> cyk(word(inputString), grammar) }
+    return block().map { grammar -> cyk(Word(inputString), grammar) }
 }
 
 public fun cyk(
     word: Word,
     grammar: Grammar,
 ): CYKModel {
-    if (word.count() == 1 && word.first().symbol.isEmpty() && grammar.includesEmptyProductionRule) {
-        return emptyProductionRuleCYKModel(word, grammar)
-    }
-    return (0..word.count()).fold(CYKModel(word, grammar)) { cykModel: CYKModel, l: Int ->
+    return (0..word.size).fold(CYKModel(word, grammar)) { cykModel: CYKModel, l: Int ->
         when (l) {
             0 -> cykModel.propagateTerminalProductionRules()
             else -> cykModel.propagateNonTerminalProductionRules(l + 1)
@@ -46,7 +43,7 @@ private fun CYKModel.findProductionRulesForTerminalSymbol(
 private fun CYKModel.propagateNonTerminalProductionRules(
     l: Int,
 ): CYKModel {
-    return (1..(word.count() - l + 1)).fold(this) { rowModel: CYKModel, s: Int ->
+    return (1..(word.size - l + 1)).fold(this) { rowModel: CYKModel, s: Int ->
         (1 until l).fold(rowModel) { columnModel: CYKModel, p: Int ->
             columnModel.findProductionRulesForNonTerminalSymbols(l = l, s = s, p = p)
         }

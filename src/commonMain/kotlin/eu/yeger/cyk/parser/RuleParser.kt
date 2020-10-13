@@ -24,18 +24,22 @@ public fun parseAsGrammar(
     includeEmptyProductionRule: Boolean = false,
     rulesString: String,
 ): Result<Grammar> {
-    return parse(startSymbol = startSymbol, rulesString = rulesString)
-        .map { productionRuleSet ->
-            Grammar(
-                startSymbol = StartSymbol(startSymbol),
-                includesEmptyProductionRule = includeEmptyProductionRule,
-                productionRuleSet = productionRuleSet,
-            )
-        }
+    return parse(
+        startSymbol = startSymbol,
+        includeEmptyProductionRule = includeEmptyProductionRule,
+        rulesString = rulesString
+    ).map { productionRuleSet ->
+        Grammar(
+            startSymbol = StartSymbol(startSymbol),
+
+            productionRuleSet = productionRuleSet,
+        )
+    }
 }
 
 public fun parse(
     startSymbol: String,
+    includeEmptyProductionRule: Boolean = false,
     rulesString: String,
 ): Result<ProductionRuleSet> {
     return validateStartSymbol(startSymbol)
@@ -45,16 +49,22 @@ public fun parse(
                 .filter { it.isNotBlank() }
                 .parseLines(validatedStartSymbol)
         }
+        .map { productionRuleSet ->
+            when (includeEmptyProductionRule) {
+                true -> productionRuleSet.copy(terminatingRules = productionRuleSet.terminatingRules + TerminatingRule(StartSymbol(startSymbol), TerminalSymbol("")))
+                else -> productionRuleSet
+            }
+        }
 }
 
-private fun validateStartSymbol(startSymbol: String): Result<String> {
+private fun validateStartSymbol(startSymbol: String): Result<StartSymbol> {
     return when {
-        startSymbol matches startSymbolRegex -> succeed(startSymbol)
+        startSymbol matches startSymbolRegex -> succeed(StartSymbol(startSymbol))
         else -> fail("Invalid start symbol: $startSymbol")
     }
 }
 
-private fun List<Line>.parseLines(startSymbol: String): Result<ProductionRuleSet> {
+private fun List<Line>.parseLines(startSymbol: StartSymbol): Result<ProductionRuleSet> {
     return fold(succeed(emptyList())) { productionRules: Result<List<ProductionRule>>, line: Line ->
         productionRules
             .and(line.parseLine(startSymbol))
@@ -62,7 +72,7 @@ private fun List<Line>.parseLines(startSymbol: String): Result<ProductionRuleSet
     }.map { productionRules -> productionRuleSet(productionRules) }
 }
 
-private fun Line.parseLine(startSymbol: String): Result<ProductionRule> {
+private fun Line.parseLine(startSymbol: StartSymbol): Result<ProductionRule> {
     return trim()
         .splitIntoComponents()
         .andThen { components -> components.asProductionRule(startSymbol) }
@@ -75,9 +85,9 @@ private fun Line.splitIntoComponents(): Result<List<String>> {
     }
 }
 
-private fun List<String>.asProductionRule(startSymbol: String): Result<ProductionRule> {
+private fun List<String>.asProductionRule(startSymbol: StartSymbol): Result<ProductionRule> {
     val inputSymbol = when (val inputString = get(0)) {
-        startSymbol -> StartSymbol(inputString)
+        startSymbol.symbol -> startSymbol
         else -> RegularNonTerminalSymbol(inputString)
     }
     return when (size) {

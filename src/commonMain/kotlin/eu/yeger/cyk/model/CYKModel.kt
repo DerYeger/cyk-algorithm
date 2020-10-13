@@ -1,6 +1,5 @@
 package eu.yeger.cyk.model
 
-import eu.yeger.cyk.Word
 import eu.yeger.cyk.epsilon
 
 public data class CYKModel
@@ -15,8 +14,8 @@ internal constructor(
     ) : this(
         word,
         grammar,
-        List(word.count()) { rowIndex ->
-            List(word.count() - rowIndex) {
+        List(word.size) { rowIndex ->
+            List(word.size - rowIndex) {
                 setOf<NonTerminalSymbol>()
             }
         },
@@ -87,15 +86,4 @@ internal fun CYKModel.withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowInde
             else -> gridRow
         }
     }.let { newGrid -> copy(grid = newGrid) }
-}
-
-internal fun emptyProductionRuleCYKModel(
-    word: Word,
-    grammar: Grammar,
-): CYKModel {
-    return CYKModel(
-        grammar = grammar,
-        word = word,
-        grid = listOf(listOf(setOf(grammar.startSymbol)))
-    )
 }
