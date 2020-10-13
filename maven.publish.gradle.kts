@@ -1,8 +1,8 @@
 // From https://stackoverflow.com/a/63502756/3891161
 
+import org.gradle.api.publish.PublishingExtension
 import java.io.FileInputStream
 import java.util.*
-import org.gradle.api.publish.PublishingExtension
 
 apply(plugin = "maven-publish")
 
@@ -77,7 +77,7 @@ configure<PublishingExtension> {
     }
 
     repositories {
-        maven("https://api.bintray.com/maven/${bintrayUser}/${bintrayRepo}/${artifact}/;publish=1") {
+        maven("https://api.bintray.com/maven/$bintrayUser/$bintrayRepo/$artifact/;publish=1") {
             credentials {
                 username = bintrayUser
                 password = bintrayApiKey
