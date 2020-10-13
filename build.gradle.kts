@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.dokka")
     id("org.jlleitschuh.gradle.ktlint")
+    `maven-publish`
 }
 
 group = "eu.yeger"
