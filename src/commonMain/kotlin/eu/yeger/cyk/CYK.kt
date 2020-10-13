@@ -34,7 +34,11 @@ private fun CYKModel.findProductionRulesForTerminalSymbol(
 ): CYKModel {
     return grammar.productionRuleSet.terminatingRules.fold(this) { cykModel: CYKModel, terminatingRule: TerminatingRule ->
         when {
-            terminatingRule produces terminalSymbol -> cykModel.withSymbolAt(terminatingRule.left, 0, terminalSymbolIndex)
+            terminatingRule produces terminalSymbol -> cykModel.withSymbolAt(
+                terminatingRule.left,
+                rowIndex = 0,
+                columnIndex = terminalSymbolIndex
+            )
             else -> cykModel
         }
     }
@@ -57,7 +61,11 @@ private fun CYKModel.findProductionRulesForNonTerminalSymbols(
 ): CYKModel {
     return grammar.productionRuleSet.nonTerminatingRules.fold(this) { cykModel: CYKModel, nonTerminatingRule: NonTerminatingRule ->
         when {
-            cykModel.allowsNonTerminalRuleAt(nonTerminatingRule, l = l, s = s, p = p) -> cykModel.withSymbolAt(nonTerminatingRule.left, l - 1, s - 1)
+            cykModel.allowsNonTerminalRuleAt(nonTerminatingRule, l = l, s = s, p = p) -> cykModel.withSymbolAt(
+                nonTerminatingRule.left,
+                rowIndex = l - 1,
+                columnIndex = s - 1
+            )
             else -> cykModel
         }
     }

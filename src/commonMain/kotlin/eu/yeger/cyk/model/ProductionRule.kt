@@ -1,25 +1,27 @@
 package eu.yeger.cyk.model
 
-public sealed class ProductionRule(
-    public val left: NonTerminalSymbol,
-    private val right: List<Symbol>,
-) {
+public sealed class ProductionRule {
+    public abstract val left: NonTerminalSymbol
+}
+
+public data class NonTerminatingRule(
+    public override val left: NonTerminalSymbol,
+    public val right: Pair<NonTerminalSymbol, NonTerminalSymbol>
+) : ProductionRule() {
     override fun toString(): String {
-        return "$left -> " + right.joinToString(" ")
+        return "$left -> ${right.first} ${right.second}"
     }
 }
 
-public class NonTerminatingRule(
-    input: NonTerminalSymbol,
-    public val firstRight: NonTerminalSymbol,
-    public val secondRight: NonTerminalSymbol,
-) : ProductionRule(input, listOf(firstRight, secondRight))
-
 public class TerminatingRule(
-    input: NonTerminalSymbol,
-    public val terminalSymbol: TerminalSymbol,
-) : ProductionRule(input, listOf(terminalSymbol))
+    public override val left: NonTerminalSymbol,
+    public val right: TerminalSymbol,
+) : ProductionRule() {
+    override fun toString(): String {
+        return "$left -> $right"
+    }
+}
 
 public infix fun TerminatingRule.produces(terminalSymbol: TerminalSymbol): Boolean {
-    return this.terminalSymbol == terminalSymbol && (terminalSymbol.symbol.isNotEmpty() || left is StartSymbol)
+    return this.right == terminalSymbol && (terminalSymbol.symbol.isNotEmpty() || left is StartSymbol)
 }

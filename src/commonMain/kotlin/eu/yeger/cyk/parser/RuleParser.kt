@@ -64,21 +64,21 @@ private fun validateStartSymbol(startSymbol: String): Result<StartSymbol> {
     }
 }
 
-private fun List<Line>.parseLines(startSymbol: StartSymbol): Result<ProductionRuleSet> {
-    return fold(succeed(emptyList())) { productionRules: Result<List<ProductionRule>>, line: Line ->
+private fun List<String>.parseLines(startSymbol: StartSymbol): Result<ProductionRuleSet> {
+    return fold(succeed(emptyList())) { productionRules: Result<List<ProductionRule>>, line: String ->
         productionRules
             .and(line.parseLine(startSymbol))
             .andThen { productionRule: ProductionRule -> succeed(productionRules.getOr(emptyList()) + productionRule) }
     }.map { productionRules -> productionRuleSet(productionRules) }
 }
 
-private fun Line.parseLine(startSymbol: StartSymbol): Result<ProductionRule> {
+private fun String.parseLine(startSymbol: StartSymbol): Result<ProductionRule> {
     return trim()
         .splitIntoComponents()
         .andThen { components -> components.asProductionRule(startSymbol) }
 }
 
-private fun Line.splitIntoComponents(): Result<List<String>> {
+private fun String.splitIntoComponents(): Result<List<String>> {
     return when {
         this matches productionRuleRegex -> succeed(split("->", " ").filter { it.isNotBlank() })
         else -> fail("Invalid production rule: $this")
@@ -98,7 +98,7 @@ private fun List<String>.asProductionRule(startSymbol: StartSymbol): Result<Prod
 }
 
 private fun List<String>.asNonTerminatingProductionRule(inputSymbol: NonTerminalSymbol): Result<NonTerminatingRule> {
-    return succeed(NonTerminatingRule(inputSymbol, RegularNonTerminalSymbol(get(1)), RegularNonTerminalSymbol(get(2))))
+    return succeed(NonTerminatingRule(inputSymbol, RegularNonTerminalSymbol(get(1)) to RegularNonTerminalSymbol(get(2))))
 }
 
 private fun List<String>.asTerminatingProductionRule(inputSymbol: NonTerminalSymbol): Result<TerminatingRule> {

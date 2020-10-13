@@ -35,14 +35,18 @@ private fun List<CYKState>.runningFindProductionRulesForTerminalSymbol(
     return last().cykModel.grammar.productionRuleSet.terminatingRules.fold(this) { previousSteps: List<CYKState>, terminatingRule: TerminatingRule ->
         val lastStep = previousSteps.last()
         previousSteps + when {
-            terminatingRule produces terminalSymbol -> lastStep.stepWithRuleAt(terminatingRule,
-                0,
-                terminalSymbolIndex,
-                listOf(Coordinates(-1, terminalSymbolIndex)))
-            else -> lastStep.stepWithoutRuleAt(terminatingRule,
-                0,
-                terminalSymbolIndex,
-                listOf(Coordinates(-1, terminalSymbolIndex)))
+            terminatingRule produces terminalSymbol -> lastStep.stepWithRuleAt(
+                terminatingRule,
+                rowIndex = 0,
+                columnIndex = terminalSymbolIndex,
+                listOf(Coordinates(-1, terminalSymbolIndex))
+            )
+            else -> lastStep.stepWithoutRuleAt(
+                terminatingRule,
+                rowIndex = 0,
+                columnIndex = terminalSymbolIndex,
+                listOf(Coordinates(-1, terminalSymbolIndex))
+            )
         }
     }
 }
@@ -65,17 +69,23 @@ private fun List<CYKState>.runningFindProductionRulesForNonTerminalSymbols(
     return last().cykModel.grammar.productionRuleSet.nonTerminatingRules.fold(this) { previousSteps: List<CYKState>, nonTerminatingRule: NonTerminatingRule ->
         val lastStep = previousSteps.last()
         previousSteps + when {
-            lastStep.cykModel.allowsNonTerminalRuleAt(nonTerminatingRule,
+            lastStep.cykModel.allowsNonTerminalRuleAt(
+                nonTerminatingRule,
                 l = l,
                 s = s,
-                p = p) -> lastStep.stepWithRuleAt(nonTerminatingRule,
-                l - 1,
-                s - 1,
-                listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
-            else -> lastStep.stepWithoutRuleAt(nonTerminatingRule,
-                l - 1,
-                s - 1,
-                listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1)))
+                p = p
+            ) -> lastStep.stepWithRuleAt(
+                nonTerminatingRule,
+                rowIndex = l - 1,
+                columnIndex = s - 1,
+                listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1))
+            )
+            else -> lastStep.stepWithoutRuleAt(
+                nonTerminatingRule,
+                rowIndex = l - 1,
+                columnIndex = s - 1,
+                listOf(Coordinates(p - 1, s - 1), Coordinates(l - p - 1, s + p - 1))
+            )
         }
     }
 }

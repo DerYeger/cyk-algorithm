@@ -70,8 +70,8 @@ internal fun CYKModel.allowsNonTerminalRuleAt(
     s: Int,
     p: Int,
 ): Boolean {
-    return this.containsSymbolAt(nonTerminatingRule.firstRight, p - 1, s - 1) &&
-        this.containsSymbolAt(nonTerminatingRule.secondRight, l - p - 1, s + p - 1)
+    return this.containsSymbolAt(nonTerminatingRule.right.first, p - 1, s - 1) &&
+        this.containsSymbolAt(nonTerminatingRule.right.second, l - p - 1, s + p - 1)
 }
 
 internal fun CYKModel.withSymbolAt(nonTerminalSymbol: NonTerminalSymbol, rowIndex: Int, columnIndex: Int): CYKModel {
