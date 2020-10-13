@@ -26,7 +26,7 @@
           <option name="friendPaths">
             <array>
               <option value="$MODULE_DIR$/../../build/classes/kotlin/jvm/main" />
-              <option value="$MODULE_DIR$/../../build/libs/cyk-algorithm-jvm-1.0-SNAPSHOT.jar" />
+              <option value="$MODULE_DIR$/../../build/libs/cyk-algorithm-jvm-0.1.0.jar" />
             </array>
           </option>
           <option name="languageVersion" value="1.4" />

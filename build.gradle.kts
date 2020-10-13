@@ -1,18 +1,20 @@
 val kotlinResultVersion: String by project
+val libraryVersion: String by project
+val publishedGroupId: String by project
 
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.dokka")
     id("org.jlleitschuh.gradle.ktlint")
-    `maven-publish`
 }
 
-group = "eu.yeger"
-version = "1.0-SNAPSHOT"
+group = publishedGroupId
+version = libraryVersion
 
 repositories {
     mavenCentral()
 }
+
 kotlin {
     explicitApi()
 
@@ -62,3 +64,5 @@ tasks {
         dependsOn(ktlintFormat)
     }
 }
+
+apply(from = "maven.publish.gradle.kts")
