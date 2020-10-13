@@ -7,10 +7,13 @@ import org.gradle.api.publish.PublishingExtension
 apply(plugin = "maven-publish")
 
 val localProperties = Properties().apply {
-    load(FileInputStream(project.rootProject.file("local.properties")))
+    val file = project.rootProject.file("local.properties")
+    if (file.exists()) {
+        load(FileInputStream(file))
+    }
 }
-val bintrayUser: String = System.getenv("BINTRAY_USER") ?: localProperties.getProperty("bintrayUser")
-val bintrayApiKey: String = System.getenv("BINTRAY_API_KEY") ?: localProperties.getProperty("bintrayApiKey")
+val bintrayUser: String = System.getenv("BINTRAY_USER") ?: localProperties.getProperty("bintrayUser") ?: ""
+val bintrayApiKey: String = System.getenv("BINTRAY_API_KEY") ?: localProperties.getProperty("bintrayApiKey") ?: ""
 val libraryVersion: String by project
 val publishedGroupId: String by project
 val artifact: String by project
