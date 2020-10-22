@@ -3,9 +3,12 @@ package eu.yeger.cyk.parser
 import eu.yeger.cyk.*
 import eu.yeger.cyk.model.*
 
-private val startSymbolRegex = Regex("[A-Z]+[a-z]*")
+private const val terminalSymbolRegexString = "[a-z]+"
+private const val nonTerminalSymbolRegexString = "[A-Z]+[a-z]*"
 
-private val productionRuleRegex = Regex("[A-Z]+[a-z]* -> ([A-Z]+[a-z]* [A-Z]+[a-z]*|[a-z]+)")
+public val terminalSymbolRegex: Regex = terminalSymbolRegexString.toRegex()
+public val nonTerminalSymbolRegex: Regex = nonTerminalSymbolRegexString.toRegex()
+public val productionRuleRegex: Regex = "$nonTerminalSymbolRegexString -> ($nonTerminalSymbolRegexString $nonTerminalSymbolRegexString|$terminalSymbolRegexString)".toRegex()
 
 public fun grammar(
     startSymbol: String,
@@ -15,23 +18,22 @@ public fun grammar(
     return parseAsGrammar(
         startSymbol = startSymbol,
         includeEmptyProductionRule = includeEmptyProductionRule,
-        rulesString = block(),
+        productionRules = block(),
     )
 }
 
 public fun parseAsGrammar(
     startSymbol: String,
     includeEmptyProductionRule: Boolean = false,
-    rulesString: String,
+    productionRules: String,
 ): Result<Grammar> {
     return parse(
         startSymbol = startSymbol,
         includeEmptyProductionRule = includeEmptyProductionRule,
-        rulesString = rulesString
+        productionRules = productionRules
     ).map { productionRuleSet ->
         Grammar(
             startSymbol = StartSymbol(startSymbol),
-
             productionRuleSet = productionRuleSet,
         )
     }
@@ -40,11 +42,11 @@ public fun parseAsGrammar(
 public fun parse(
     startSymbol: String,
     includeEmptyProductionRule: Boolean = false,
-    rulesString: String,
+    productionRules: String,
 ): Result<ProductionRuleSet> {
     return validateStartSymbol(startSymbol)
         .andThen { validatedStartSymbol ->
-            rulesString.trimIndent()
+            productionRules.trimIndent()
                 .lines()
                 .filter { it.isNotBlank() }
                 .parseLines(validatedStartSymbol)
@@ -59,7 +61,8 @@ public fun parse(
 
 private fun validateStartSymbol(startSymbol: String): Result<StartSymbol> {
     return when {
-        startSymbol matches startSymbolRegex -> succeed(StartSymbol(startSymbol))
+        startSymbol matches nonTerminalSymbolRegex -> succeed(StartSymbol(startSymbol))
+        startSymbol.isBlank() -> fail("Start symbol cannot be blank.")
         else -> fail("Invalid start symbol: $startSymbol")
     }
 }
@@ -93,7 +96,7 @@ private fun List<String>.asProductionRule(startSymbol: StartSymbol): Result<Prod
     return when (size) {
         3 -> asNonTerminatingProductionRule(inputSymbol)
         2 -> asTerminatingProductionRule(inputSymbol)
-        else -> fail("Invalid component amount ($size)! Must be 2 or 3")
+        else -> fail("Invalid component amount ($size)! Must be 2 for terminal or 3 for non terminal production rules.")
     }
 }
 

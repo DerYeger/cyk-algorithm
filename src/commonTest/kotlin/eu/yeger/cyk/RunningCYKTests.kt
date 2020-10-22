@@ -1,6 +1,6 @@
 package eu.yeger.cyk
 
-import eu.yeger.cyk.model.result
+import eu.yeger.cyk.model.CYKState
 import eu.yeger.cyk.parser.grammar
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -28,7 +28,7 @@ class RunningCYKTests {
                 """.trimIndent()
             }
         }.getOrElse { error(it) }
-        assertTrue(states.last().cykModel.result)
+        assertTrue((states.last() as CYKState.Done).wordIsMemberOfLanguage)
     }
 
     @Test
@@ -51,7 +51,7 @@ class RunningCYKTests {
                 """.trimIndent()
             }
         }.getOrElse { error(it) }
-        assertFalse(states.last().cykModel.result)
+        assertFalse((states.last() as CYKState.Done).wordIsMemberOfLanguage)
     }
 
     @Test
@@ -59,7 +59,7 @@ class RunningCYKTests {
         val states = runningCYK("") {
             grammar("S", includeEmptyProductionRule = true) { "" }
         }.getOrElse { error(it) }
-        assertTrue(states.last().cykModel.result)
+        assertTrue((states.last() as CYKState.Done).wordIsMemberOfLanguage)
     }
 
     @Test
@@ -67,7 +67,7 @@ class RunningCYKTests {
         val states = runningCYK("") {
             grammar("S", includeEmptyProductionRule = false) { "" }
         }.getOrElse { error(it) }
-        assertFalse(states.last().cykModel.result)
+        assertFalse((states.last() as CYKState.Done).wordIsMemberOfLanguage)
     }
 
     @Test
@@ -75,6 +75,6 @@ class RunningCYKTests {
         val states = runningCYK("") {
             grammar("S") { "" }
         }.getOrElse { error(it) }
-        assertFalse(states.last().cykModel.result)
+        assertFalse((states.last() as CYKState.Done).wordIsMemberOfLanguage)
     }
 }
