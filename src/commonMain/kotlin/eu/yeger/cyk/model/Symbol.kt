@@ -1,13 +1,11 @@
 package eu.yeger.cyk.model
 
-import eu.yeger.cyk.epsilon
-
 public sealed class Symbol {
     public abstract val symbol: String
 }
 
 public data class TerminalSymbol(public override val symbol: String) : Symbol() {
-    override fun toString(): String = symbol.ifBlank { epsilon }
+    override fun toString(): String = symbol.ifBlank { "ε" }
 }
 
 public sealed class NonTerminalSymbol : Symbol()

@@ -5,8 +5,8 @@ public sealed class Result<out T : Any> {
     public data class Failure<T : Any>(val error: String) : Result<T>()
 }
 
-public fun <T : Any> succeed(data: T): Result.Success<T> {
-    return Result.Success(data)
+public fun <T : Any> T.asSuccess(): Result.Success<T> {
+    return Result.Success(this)
 }
 
 public fun <T : Any> fail(error: String): Result.Failure<T> {
@@ -80,5 +80,23 @@ public fun <T : Any> Result<T>.getErrorOrElse(block: (T) -> String): String {
     return when (this) {
         is Result.Success -> block(data)
         is Result.Failure -> error
+    }
+}
+
+public fun <T : Any, U : Any, V : Any> Result<T>.with(other: Result<U>, block: (T, U) -> V): Result<V> {
+    return when {
+        this is Result.Success && other is Result.Success -> Result.Success(block(this.data, other.data))
+        this is Result.Failure && other is Result.Failure -> Result.Failure("${this.error}\n${other.error}")
+        this is Result.Failure -> Result.Failure(this.error)
+        other is Result.Failure -> Result.Failure(other.error)
+        else -> Result.Failure("Impossible state reached.")
+    }
+}
+
+public fun <T : Any, U : Any> List<T>.mapAsResult(
+    transform: T.() -> Result<U>,
+): Result<List<U>> {
+    return fold(Result.Success(emptyList<U>()) as Result<List<U>>) { acc, x ->
+        acc.with(transform(x), List<U>::plus)
     }
 }

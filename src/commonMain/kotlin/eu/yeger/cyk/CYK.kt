@@ -2,12 +2,20 @@ package eu.yeger.cyk
 
 import eu.yeger.cyk.model.*
 import eu.yeger.cyk.model.withSymbolAt
+import eu.yeger.cyk.parser.word
 
 public fun cyk(
-    inputString: String,
-    block: () -> Result<Grammar>,
+    wordString: String,
+    grammar: () -> Result<Grammar>
 ): Result<CYKModel> {
-    return block().map { grammar -> cyk(Word(inputString), grammar) }
+    return word(wordString).with(grammar(), ::cyk)
+}
+
+public fun cyk(
+    word: Result<Word>,
+    grammar: Result<Grammar>
+): Result<CYKModel> {
+    return word.with(grammar, ::cyk)
 }
 
 public fun cyk(

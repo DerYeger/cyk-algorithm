@@ -1,12 +1,20 @@
 package eu.yeger.cyk
 
 import eu.yeger.cyk.model.*
+import eu.yeger.cyk.parser.word
 
 public fun runningCYK(
-    inputString: String,
-    block: () -> Result<Grammar>,
+    wordString: String,
+    grammar: () -> Result<Grammar>
 ): Result<List<CYKState>> {
-    return block().map { grammar -> runningCYK(Word(inputString), grammar) }
+    return word(wordString).with(grammar(), ::runningCYK)
+}
+
+public fun runningCYK(
+    word: Result<Word>,
+    grammar: Result<Grammar>
+): Result<List<CYKState>> {
+    return word.with(grammar, ::runningCYK)
 }
 
 public fun runningCYK(
