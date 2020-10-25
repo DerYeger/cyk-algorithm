@@ -13,7 +13,7 @@ public data class NonTerminatingRule(
     }
 }
 
-public class TerminatingRule(
+public data class TerminatingRule(
     public override val left: NonTerminalSymbol,
     public val right: TerminalSymbol,
 ) : ProductionRule() {

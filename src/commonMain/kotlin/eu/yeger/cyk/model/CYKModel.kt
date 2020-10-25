@@ -1,7 +1,5 @@
 package eu.yeger.cyk.model
 
-import eu.yeger.cyk.epsilon
-
 public data class CYKModel
 internal constructor(
     val word: Word,
@@ -30,15 +28,12 @@ internal constructor(
             }
             val maxTerminalSymbolLength = word.maxOf { terminalSymbol ->
                 terminalSymbol.toString().length
-            }.coerceAtLeast(epsilon.length)
+            }
             val maxLength = maxOf(maxRuleSetLength, maxTerminalSymbolLength)
 
             val columnPadding = " | "
             val wordRowString = word.joinToString(columnPadding, prefix = "| ", postfix = " |") { nonTerminalSymbol ->
-                when {
-                    nonTerminalSymbol.symbol.isEmpty() -> epsilon
-                    else -> nonTerminalSymbol.toString()
-                }.padEnd(maxLength, ' ')
+                nonTerminalSymbol.toString().padEnd(maxLength, ' ')
             }.plus("\n")
             val wordRowSeparator = "".padEnd(size * maxLength + (size - 1) * columnPadding.length + 4, '-').plus("\n")
 
