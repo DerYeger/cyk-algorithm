@@ -49,14 +49,15 @@ private fun String.splitIntoComponents(): Result<List<String>> {
 }
 
 private fun List<String>.asProductionRule(startSymbol: StartSymbol): Result<ProductionRule> {
-    val inputSymbol = when (val inputString = get(0)) {
-        startSymbol.symbol -> startSymbol
-        else -> RegularNonTerminalSymbol(inputString)
-    }
-    return when (size) {
-        3 -> asNonTerminatingProductionRule(inputSymbol)
-        2 -> asTerminatingProductionRule(inputSymbol)
-        else -> fail("Invalid amount of symbols on the right side! Must be 1 for terminal or 2 for non terminal production rules. ($lastIndex)")
+    return when (val inputString = get(0)) {
+        startSymbol.symbol -> startSymbol.asSuccess()
+        else -> inputString.parseNonTerminalSymbol()
+    }.andThen { inputSymbol ->
+        when (size) {
+            3 -> asNonTerminatingProductionRule(inputSymbol)
+            2 -> asTerminatingProductionRule(inputSymbol)
+            else -> fail("Invalid amount of symbols on the right side! Must be 1 for terminal or 2 for non terminal production rules. ($lastIndex)")
+        }
     }
 }
 
