@@ -54,6 +54,7 @@ class ParserTests {
             "S -> a b c",
             "S -> A b",
             "S -> a B",
+            "s -> A B",
         ).forEach { productionRule ->
             assertTrue {
                 grammar("S") {
