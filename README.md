@@ -8,7 +8,7 @@
 
 > Kotlin Multiplatform implementation of the CYK algorithm.
 
-<p><img src="/src/main/resources/cyk-algorithm-logo.png" height="128" width="128"></p>
+<p><img src="/docs/cyk-algorithm-logo.png" height="128" width="128"></p>
 
 ## Installation
 
