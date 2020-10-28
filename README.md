@@ -8,6 +8,8 @@
 
 > Kotlin Multiplatform implementation of the CYK algorithm.
 
+<p><img src="/src/main/resources/cyk-algorithm-logo.png" height="128" width="128"></p>
+
 ## Installation
 
 #### build.gradle.kts
@@ -55,3 +57,7 @@ runningCYK("hello world") {
 ## Example
 
 An example project using this library can be found [here](https://github.com/DerYeger/cyk-visualizer).
+
+## Credits
+
+Logo by [Magdalena Jirku](https://www.deviantart.com/keshyx).
